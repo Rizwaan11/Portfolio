@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#09090b;--bg2:#0f0f12;--card:#111114;--card2:#18181b;
+    --line:rgba(255,255,255,0.06);--line2:rgba(255,255,255,0.1);
+    --t1:#fafafa;--t2:#a1a1aa;--t3:#52525b;
+    --acc:#dc2626;--acc2:#ef4444;--acc3:#fca5a5;
+    --soft:rgba(220,38,38,0.1);--glow:rgba(220,38,38,0.45);
+    --sans:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--t1);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  ::selection{background:var(--acc);color:#fff}
+  ::-webkit-scrollbar{width:8px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:#27272a;border-radius:10px;border:2px solid var(--bg)}
+  a{color:inherit;text-decoration:none}
+  section{scroll-margin-top:80px}
+  /* keyframes */
+  @keyframes gridpan{from{background-position:0 0}to{background-position:40px 40px}}
+  @keyframes pulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:.85;transform:scale(1.04)}}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+  @keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @keyframes float1{0%,100%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(8px,-14px) rotate(2deg)}75%{transform:translate(-8px,-6px) rotate(-2deg)}}
+  @keyframes float2{0%,100%{transform:translate(0,0)}33%{transform:translate(-10px,10px)}66%{transform:translate(8px,-8px)}}
+  @keyframes float3{0%,100%{transform:translate(0,0)}50%{transform:translate(12px,-16px)}}
+  @keyframes cursor-blink{0%,100%{opacity:1}50%{opacity:0}}
+  @keyframes border-beam{0%{offset-distance:0%}100%{offset-distance:100%}}
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  @keyframes meteor{0%{transform:translate(0,0) rotate(215deg);opacity:1}70%{opacity:1}100%{transform:translate(-600px,600px) rotate(215deg);opacity:0}}
+  @keyframes trace-glow{0%,100%{box-shadow:0 0 8px var(--acc),0 0 20px var(--glow)}50%{box-shadow:0 0 14px var(--acc),0 0 36px var(--glow)}}
+  /* responsive */
+  @media(max-width:900px){
+    .nav-links{display:none!important}
+    .hero-name{font-size:clamp(2.2rem,12vw,4.2rem)!important}
+    .bento{grid-template-columns:1fr!important;grid-template-rows:auto!important}
+    .bento>*{grid-column:span 1!important;grid-row:span 1!important}
+    .proj-hero-inner{grid-template-columns:1fr!important}
+    .proj-sm{grid-template-columns:1fr!important}
+    .skills-grid{grid-template-columns:1fr!important}
+    .float-icon{display:none!important}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="position:relative;background:var(--bg);min-height:100vh">
+
+  <!-- TRACING BEAM (Magic UI) — vertical scroll indicator -->
+  <div data-trace-line="" style="position:fixed;left:28px;top:0;bottom:0;width:1px;background:var(--line);z-index:90;display:none">
+    <div data-trace-dot="" style="position:absolute;left:-3.5px;top:0;width:8px;height:8px;border-radius:50%;background:var(--acc);animation:trace-glow 2s ease-in-out infinite;transition:top .05s linear"></div>
+  </div>
+
+  <!-- SCROLL PROGRESS -->
+  <div data-progress="" style="position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,var(--acc),var(--acc2));z-index:120;box-shadow:0 0 14px var(--glow)"></div>
+
+  <!-- CUSTOM CURSOR (Aceternity spotlight) -->
+  <div data-cursor-ring="" style="position:fixed;top:0;left:0;width:28px;height:28px;border:1.5px solid var(--acc);border-radius:50%;pointer-events:none;z-index:200;transform:translate(-100px,-100px);transition:width .22s,height .22s,background .22s;mix-blend-mode:screen"></div>
+  <div data-cursor-dot="" style="position:fixed;top:0;left:0;width:5px;height:5px;background:var(--acc);border-radius:50%;pointer-events:none;z-index:201;transform:translate(-100px,-100px)"></div>
+  <!-- Spotlight glow that follows mouse on cards -->
+  <div data-spotlight="" style="position:fixed;top:0;left:0;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,var(--soft),transparent 70%);pointer-events:none;z-index:1;opacity:0;transition:opacity .3s;transform:translate(-200px,-200px)"></div>
+
+  <!-- ===== NAV ===== -->
+  <nav data-nav-bar="" style="position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px clamp(16px,4vw,48px);transition:background .3s,backdrop-filter .3s">
+    <div class="nav-links" style="display:flex;align-items:center;gap:2px;padding:4px 5px;border:1px solid var(--line2);border-radius:999px;background:rgba(9,9,11,0.6);backdrop-filter:blur(16px)">
+      <a href="#home" data-magnetic="" style="display:flex;align-items:center;padding:8px 16px;border-radius:999px;font-weight:800;font-size:14px;color:var(--acc);letter-spacing:-.02em;font-family:var(--mono)">MR<span style="color:var(--t3)">.</span></a>
+      <a href="#home" data-nav="home" style="padding:8px 14px;border-radius:999px;font-size:13px;font-weight:500;color:var(--t1);transition:all .2s">Home</a>
+      <a href="#about" data-nav="about" style="padding:8px 14px;border-radius:999px;font-size:13px;font-weight:500;color:var(--t3);transition:all .2s">About</a>
+      <a href="#projects" data-nav="projects" style="padding:8px 14px;border-radius:999px;font-size:13px;font-weight:500;color:var(--t3);transition:all .2s">Projects</a>
+      <a href="#skills" data-nav="skills" style="padding:8px 14px;border-radius:999px;font-size:13px;font-weight:500;color:var(--t3);transition:all .2s">Skills</a>
+      <a href="#education" data-nav="education" style="padding:8px 14px;border-radius:999px;font-size:13px;font-weight:500;color:var(--t3);transition:all .2s">Education</a>
+      <a href="#contact" data-nav="contact" style="padding:8px 14px;border-radius:999px;font-size:13px;font-weight:500;color:var(--t3);transition:all .2s">Contact</a>
+      <a href="#resume" data-nav="resume" style="padding:8px 14px;border-radius:999px;font-size:13px;font-weight:500;color:var(--t3);transition:all .2s">Resume</a>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section id="home" data-screen-label="Hero" style="position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 50px;overflow:hidden">
+    <!-- Meteors (Aceternity) -->
+    <div data-meteors="" style="position:absolute;inset:0;overflow:hidden;pointer-events:none">
+      <div style="position:absolute;top:0;left:40%;width:1px;height:80px;background:linear-gradient(180deg,var(--acc2),transparent);opacity:0;animation:meteor 4s linear infinite;animation-delay:0s"></div>
+      <div style="position:absolute;top:0;left:65%;width:1px;height:60px;background:linear-gradient(180deg,var(--acc3),transparent);opacity:0;animation:meteor 5s linear infinite;animation-delay:1.5s"></div>
+      <div style="position:absolute;top:0;left:25%;width:1px;height:50px;background:linear-gradient(180deg,var(--acc2),transparent);opacity:0;animation:meteor 6s linear infinite;animation-delay:3s"></div>
+      <div style="position:absolute;top:0;left:80%;width:1px;height:70px;background:linear-gradient(180deg,rgba(255,255,255,0.3),transparent);opacity:0;animation:meteor 4.5s linear infinite;animation-delay:2s"></div>
+      <div style="position:absolute;top:0;left:15%;width:1px;height:55px;background:linear-gradient(180deg,rgba(255,255,255,0.25),transparent);opacity:0;animation:meteor 5.5s linear infinite;animation-delay:4s"></div>
+    </div>
+    <!-- bg grid + glow -->
+    <div data-par="0.3" style="position:absolute;top:-15%;left:50%;transform:translateX(-50%);width:140%;height:75%;background:radial-gradient(50% 60% at 50% 0%,var(--soft),transparent 70%);pointer-events:none"></div>
+    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(60% 50% at 50% 40%,#000,transparent 75%);-webkit-mask-image:radial-gradient(60% 50% at 50% 40%,#000,transparent 75%);animation:gridpan 20s linear infinite;pointer-events:none"></div>
+    <div data-par="0.6" style="position:absolute;left:50%;bottom:3%;width:min(900px,95vw);height:200px;transform:translateX(-50%);background:radial-gradient(50% 100% at 50% 100%,var(--glow),transparent 65%);filter:blur(12px);opacity:.35;animation:pulse 5s ease-in-out infinite;pointer-events:none"></div>
+
+    <!-- floating tech logos (EduQuest style) -->
+    <!-- React -->
+    <div class="float-icon" style="position:absolute;top:14%;left:8%;animation:float1 7s ease-in-out infinite;pointer-events:none;opacity:.35">
+      <div style="display:grid;place-items:center;width:72px;height:72px;border-radius:18px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(6px);box-shadow:0 8px 32px rgba(0,0,0,0.25)">
+        <svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke="#61DAFB" stroke-width="1.2"><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/><circle cx="12" cy="12" r="1.8" fill="#61DAFB" stroke="none"/></svg>
+      </div>
+    </div>
+    <!-- JavaScript -->
+    <div class="float-icon" style="position:absolute;top:12%;right:10%;animation:float2 8s ease-in-out infinite;pointer-events:none;opacity:.3">
+      <div style="display:grid;place-items:center;width:68px;height:68px;border-radius:16px;background:rgba(247,223,30,0.08);border:1px solid rgba(247,223,30,0.12);backdrop-filter:blur(6px);box-shadow:0 8px 32px rgba(0,0,0,0.25)">
+        <span style="font-family:var(--mono);font-size:24px;font-weight:800;color:#F7DF1E;line-height:1">JS</span>
+      </div>
+    </div>
+    <!-- Node.js -->
+    <div class="float-icon" style="position:absolute;top:42%;left:4%;animation:float3 9s ease-in-out infinite;pointer-events:none;opacity:.28">
+      <div style="display:grid;place-items:center;width:66px;height:66px;border-radius:16px;background:rgba(95,160,78,0.07);border:1px solid rgba(95,160,78,0.1);backdrop-filter:blur(6px);box-shadow:0 8px 32px rgba(0,0,0,0.25)">
+        <svg viewBox="0 0 24 24" width="34" height="34" fill="#5FA04E"><path d="M11.998 24c-.321 0-.641-.084-.922-.247L8.14 22.016c-.438-.245-.224-.332-.08-.383.655-.228.787-.28 1.486-.677.073-.04.17-.025.245.015l2.255 1.339a.307.307 0 0 0 .284 0l8.795-5.076a.282.282 0 0 0 .141-.244V6.839a.29.29 0 0 0-.143-.249L12.14 1.516a.28.28 0 0 0-.282 0L3.065 6.591a.287.287 0 0 0-.144.247v10.15c0 .1.054.194.142.243l2.41 1.392c1.307.654 2.108-.116 2.108-.89V7.754c0-.145.115-.257.256-.257h1.115c.14 0 .255.112.255.257v9.978c0 1.742-.949 2.743-2.6 2.743-.508 0-.909 0-2.026-.55l-2.307-1.33A1.85 1.85 0 0 1 1.35 17.04V6.89c0-.68.363-1.314.958-1.654L11.1.16a1.928 1.928 0 0 1 1.797 0l8.794 5.076a1.853 1.853 0 0 1 .955 1.654v10.15c0 .68-.363 1.314-.955 1.654l-8.794 5.076c-.28.163-.6.247-.922.247z"/></svg>
+      </div>
+    </div>
+    <!-- MongoDB -->
+    <div class="float-icon" style="position:absolute;bottom:22%;left:9%;animation:float1 6.5s ease-in-out infinite;animation-delay:-1.5s;pointer-events:none;opacity:.3">
+      <div style="display:grid;place-items:center;width:64px;height:64px;border-radius:16px;background:rgba(71,162,72,0.07);border:1px solid rgba(71,162,72,0.1);backdrop-filter:blur(6px);box-shadow:0 8px 32px rgba(0,0,0,0.25)">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="#47A248"><path d="M13.74 4.23c-.84-1.57-1.48-2.3-1.62-2.49-.14.19-.78.92-1.62 2.49C8.88 7.17 5.1 11.55 5.1 15.24c0 3.55 2.78 6.76 6.37 6.76h1.06c3.59 0 6.37-3.21 6.37-6.76 0-3.69-3.78-8.07-5.16-11.01zM12.5 20.05v-7.93c0-.15.15-.28.3-.22.55.23 2.63 2.07 2.63 4.2 0 2.05-1.56 3.71-2.93 3.95z"/></svg>
+      </div>
+    </div>
+    <!-- CSS -->
+    <div class="float-icon" style="position:absolute;bottom:32%;right:7%;animation:float2 7.5s ease-in-out infinite;animation-delay:-2s;pointer-events:none;opacity:.25">
+      <div style="display:grid;place-items:center;width:62px;height:62px;border-radius:16px;background:rgba(21,114,182,0.08);border:1px solid rgba(21,114,182,0.1);backdrop-filter:blur(6px);box-shadow:0 8px 32px rgba(0,0,0,0.25)">
+        <span style="font-family:var(--mono);font-size:20px;font-weight:800;color:#1572B6;line-height:1">CSS</span>
+      </div>
+    </div>
+    <!-- HTML -->
+    <div class="float-icon" style="position:absolute;top:28%;right:5%;animation:float3 8s ease-in-out infinite;animation-delay:-3s;pointer-events:none;opacity:.25">
+      <div style="display:grid;place-items:center;width:60px;height:60px;border-radius:16px;background:rgba(227,79,38,0.07);border:1px solid rgba(227,79,38,0.1);backdrop-filter:blur(6px);box-shadow:0 8px 32px rgba(0,0,0,0.25)">
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="#E34F26"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.071-.999.132-1.47.07-.999H6.742l.667 7.47h7.894l-.335 3.64-3.007.84-2.984-.84-.188-2.207H6.257l.368 4.095 5.339 1.485.028-.007 5.313-1.486.721-8.044H8.531z"/></svg>
+      </div>
+    </div>
+    <!-- Tailwind -->
+    <div class="float-icon" style="position:absolute;bottom:16%;right:14%;animation:float1 7s ease-in-out infinite;animation-delay:-4s;pointer-events:none;opacity:.22">
+      <div style="display:grid;place-items:center;width:58px;height:58px;border-radius:14px;background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.08);backdrop-filter:blur(6px);box-shadow:0 8px 32px rgba(0,0,0,0.25)">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="#38BDF8"><path d="M12 6C9.33 6 7.67 7.33 7 10c1-1.33 2.17-1.83 3.5-1.5.76.19 1.3.74 1.9 1.35C13.45 10.92 14.73 12 17 12c2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.3-.74-1.9-1.35C15.55 7.08 14.27 6 12 6zM7 12c-2.67 0-4.33 1.33-5 4 1-1.33 2.17-1.83 3.5-1.5.76.19 1.3.74 1.9 1.35C8.45 16.92 9.73 18 12 18c2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.3-.74-1.9-1.35C10.55 13.08 9.27 12 7 12z"/></svg>
+      </div>
+    </div>
+    <!-- Git -->
+    <div class="float-icon" style="position:absolute;top:55%;left:12%;animation:float2 8.5s ease-in-out infinite;animation-delay:-2.5s;pointer-events:none;opacity:.2">
+      <div style="display:grid;place-items:center;width:56px;height:56px;border-radius:14px;background:rgba(240,80,50,0.06);border:1px solid rgba(240,80,50,0.08);backdrop-filter:blur(6px);box-shadow:0 8px 32px rgba(0,0,0,0.25)">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="#F05032"><path d="M23.546 10.93L13.067.452a1.55 1.55 0 0 0-2.188 0L8.708 2.627l2.76 2.76a1.838 1.838 0 0 1 2.327 2.341l2.66 2.66a1.838 1.838 0 1 1-1.103 1.06l-2.48-2.48v6.53a1.838 1.838 0 1 1-1.512-.06V8.792a1.838 1.838 0 0 1-.998-2.41L7.63 3.648.452 10.827a1.55 1.55 0 0 0 0 2.188l10.48 10.48a1.55 1.55 0 0 0 2.186 0l10.43-10.43a1.55 1.55 0 0 0 0-2.135z"/></svg>
+      </div>
+    </div>
+    <!-- LangChain / AI -->
+    <div class="float-icon" style="position:absolute;top:60%;right:4%;animation:float3 7.5s ease-in-out infinite;animation-delay:-1s;pointer-events:none;opacity:.22">
+      <div style="display:grid;place-items:center;width:56px;height:56px;border-radius:14px;background:rgba(220,38,38,0.06);border:1px solid rgba(220,38,38,0.08);backdrop-filter:blur(6px);box-shadow:0 8px 32px rgba(0,0,0,0.25)">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="var(--acc2)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8"/></svg>
+      </div>
+    </div>
+
+    <!-- status badge -->
+    <div data-reveal="" style="display:inline-flex;align-items:center;gap:9px;padding:7px 16px;border:1px solid var(--line2);border-radius:999px;background:rgba(15,15,18,0.6);backdrop-filter:blur(10px);margin-bottom:28px;font-size:13px;color:var(--t2)">
+      <span style="width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 10px #22c55e;animation:pulse 2.4s ease-in-out infinite"></span>
+      Open to internships &amp; junior roles
+    </div>
+
+    <!-- intro text -->
+    <p data-reveal="" data-reveal-delay="50" style="margin:0 0 8px;font-family:var(--mono);font-size:14px;color:var(--acc);letter-spacing:.08em">// Hey, I'm</p>
+
+    <h1 class="hero-name" data-par="0.1" style="margin:0;font-size:clamp(3.2rem,10vw,8.8rem);font-weight:900;line-height:.88;letter-spacing:-.05em;background:linear-gradient(180deg,#fff 15%,#71717a 100%);-webkit-background-clip:text;background-clip:text;color:transparent">M Rizwan Ali</h1>
+
+    <!-- role badge -->
+    <div data-reveal="" data-reveal-delay="100" style="margin-top:26px;display:inline-flex;align-items:center;gap:10px;padding:10px 22px;border-radius:999px;background:var(--soft);border:1px solid rgba(220,38,38,0.3);color:var(--acc2);font-weight:600;font-size:14px">
+      <span style="font-family:var(--mono);font-size:13px">&lt;/&gt;</span> MERN Stack Developer
+    </div>
+
+    <!-- tagline -->
+    <p data-reveal="" data-reveal-delay="160" style="margin:26px auto 0;max-width:560px;font-size:clamp(1.02rem,2vw,1.22rem);line-height:1.65;color:var(--t2);text-wrap:pretty">
+      I build full-stack web apps — from <span style="color:var(--t1);font-weight:600">AI-powered platforms</span> to clean, fast, <span data-roles="" style="color:var(--acc2);font-weight:600">production-ready</span> products.
+    </p>
+
+    <!-- terminal line -->
+    <div data-reveal="" data-reveal-delay="210" style="margin-top:20px;display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:10px;background:rgba(255,255,255,0.025);border:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--t3)">
+      <span style="color:#22c55e">❯</span>
+      <span>currently_building</span>
+      <span style="color:var(--t3)">=</span>
+      <span style="color:var(--acc3)">"EduQuest"</span>
+      <span style="display:inline-block;width:7px;height:15px;background:var(--acc);animation:cursor-blink 1s step-end infinite;margin-left:2px"></span>
+    </div>
+
+    <!-- CTA — shimmer button (Magic UI) -->
+    <div data-reveal="" data-reveal-delay="260" style="margin-top:38px;display:flex;flex-wrap:wrap;gap:14px;justify-content:center">
+      <a href="#contact" data-magnetic="" style="position:relative;display:inline-flex;align-items:center;gap:9px;padding:14px 28px;border-radius:12px;background:var(--acc);color:#fff;font-weight:700;font-size:15px;overflow:hidden;box-shadow:0 14px 40px -10px var(--glow);transition:transform .2s" style-hover="transform:translateY(-2px)">
+        <span style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,0.2) 50%,transparent 80%);background-size:200% 100%;animation:shimmer 3s ease-in-out infinite;pointer-events:none"></span>
+        <span style="position:relative;display:flex;align-items:center;gap:9px">Let's connect <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a href="#projects" data-magnetic="" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:12px;background:transparent;border:1px solid var(--line2);color:var(--t1);font-weight:600;font-size:15px;transition:border-color .2s,background .2s" style-hover="border-color:var(--acc);background:var(--soft)">
+        View projects
+      </a>
+    </div>
+
+    <!-- social row -->
+    <div data-reveal="" data-reveal-delay="310" style="margin-top:36px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center">
+      <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--t3);font-family:var(--mono)">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        PK
+      </span>
+      <span style="width:1px;height:12px;background:var(--line2)"></span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <sc-for list="{{ socials }}" as="s" hint-placeholder-count="4">
+          <a href="{{ s.href }}" target="_blank" rel="noreferrer" data-magnetic="" aria-label="{{ s.label }}" title="{{ s.label }}" style="display:grid;place-items:center;width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,0.02);color:var(--t3);transition:all .2s" style-hover="color:var(--acc);border-color:var(--acc);background:var(--soft)">{{ s.icon }}</a>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- scroll -->
+    <div style="position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--t3);font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-family:var(--mono);animation:bob 2.4s ease-in-out infinite">
+      scroll
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+    </div>
+  </section>
+
+  <!-- ===== MARQUEE ===== -->
+  <div style="border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 0;overflow:hidden;background:var(--bg2)">
+    <div style="display:flex;width:max-content;animation:marq 28s linear infinite">
+      <div style="display:flex;align-items:center;gap:36px;padding:0 18px;flex-shrink:0">
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">REACT</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">NODE.JS</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">EXPRESS</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">MONGODB</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">JAVASCRIPT</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">LANGCHAIN</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">TAILWIND</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">POSTGRESQL</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">GIT</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">POSTMAN</span><span style="color:var(--acc);font-size:7px">◆</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:36px;padding:0 18px;flex-shrink:0">
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">REACT</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">NODE.JS</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">EXPRESS</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">MONGODB</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">JAVASCRIPT</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">LANGCHAIN</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">TAILWIND</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">POSTGRESQL</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">GIT</span><span style="color:var(--acc);font-size:7px">◆</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;letter-spacing:.06em">POSTMAN</span><span style="color:var(--acc);font-size:7px">◆</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ABOUT — BENTO GRID (Aceternity / Magic UI) ===== -->
+  <section id="about" data-screen-label="About" style="max-width:1100px;margin:0 auto;padding:120px 24px">
+    <div data-reveal="" style="margin-bottom:48px">
+      <p style="margin:0 0 8px;font-family:var(--mono);font-size:13px;color:var(--acc);letter-spacing:.1em">// about</p>
+      <h2 style="margin:0;font-size:clamp(2rem,4.5vw,3rem);font-weight:800;letter-spacing:-.04em">A bit about me</h2>
+    </div>
+    <div class="bento" style="display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:auto auto;gap:16px">
+      <!-- cell 1: photo (spans 1 col, 2 rows) -->
+      <div data-reveal="" data-spotlight-card="" style="grid-row:span 2;position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line2);background:var(--card);min-height:380px">
+        <img src="assets/rizwan.jpg" alt="M Rizwan Ali" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block">
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(9,9,11,0.85));pointer-events:none"></div>
+        <div style="position:absolute;left:18px;bottom:18px;display:flex;flex-direction:column;gap:4px">
+          <span style="font-weight:700;font-size:15px">M Rizwan Ali</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--t3)">Software Engineer</span>
+        </div>
+        <div style="position:absolute;right:14px;bottom:14px;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(9,9,11,0.6);backdrop-filter:blur(8px);border:1px solid var(--line2);font-size:11px;font-weight:600">
+          <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 7px #22c55e"></span> Available
+        </div>
+      </div>
+      <!-- cell 2: bio -->
+      <div data-reveal="" data-reveal-delay="60" data-spotlight-card="" style="grid-column:span 2;padding:28px;border-radius:18px;border:1px solid var(--line2);background:var(--card);position:relative;overflow:hidden">
+        <p style="margin:0 0 14px;font-size:1.08rem;line-height:1.7;color:var(--t2)">
+          I'm a <span style="color:var(--t1);font-weight:600">software engineering graduate</span> and self-driven MERN stack developer. I love turning ideas into real, working products — recently going deep on <span style="color:var(--acc2);font-weight:600">AI applications with LangChain and RAG</span>.
+        </p>
+        <p style="margin:0;font-size:1.08rem;line-height:1.7;color:var(--t2)">
+          I care about clean code, thoughtful UI, and shipping things that actually get used. Looking for an <span style="color:var(--t1);font-weight:600">internship or junior role</span> where I can learn fast and contribute from day one.
+        </p>
+      </div>
+      <!-- cell 3: terminal card -->
+      <div data-reveal="" data-reveal-delay="120" data-spotlight-card="" style="padding:0;border-radius:18px;border:1px solid var(--line2);background:var(--card);overflow:hidden;position:relative">
+        <div style="display:flex;align-items:center;gap:7px;padding:10px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,0.015)">
+          <span style="width:9px;height:9px;border-radius:50%;background:#ef4444"></span>
+          <span style="width:9px;height:9px;border-radius:50%;background:#eab308"></span>
+          <span style="width:9px;height:9px;border-radius:50%;background:#22c55e"></span>
+          <span style="flex:1;text-align:center;font-family:var(--mono);font-size:10px;color:var(--t3);margin-right:32px">whoami.sh</span>
+        </div>
+        <div style="padding:16px 18px;font-family:var(--mono);font-size:11.5px;line-height:1.9;color:var(--t2)">
+          <div><span style="color:#22c55e">❯</span> cat about.json</div>
+          <div>{</div>
+          <div>  <span style="color:var(--t3)">"role"</span>: <span style="color:var(--acc3)">"MERN Dev"</span>,</div>
+          <div>  <span style="color:var(--t3)">"degree"</span>: <span style="color:var(--acc3)">"BS SE"</span>,</div>
+          <div>  <span style="color:var(--t3)">"focus"</span>: <span style="color:var(--acc3)">"AI + Web"</span>,</div>
+          <div>  <span style="color:var(--t3)">"status"</span>: <span style="color:#22c55e">"open"</span></div>
+          <div>}</div>
+        </div>
+      </div>
+      <!-- cell 4: github contribution grid -->
+      <div data-reveal="" data-reveal-delay="180" data-spotlight-card="" style="padding:22px;border-radius:18px;border:1px solid var(--line2);background:var(--card);overflow:hidden;position:relative">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <span style="font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.06em">CONTRIBUTIONS</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--acc2)">2025</span>
+        </div>
+        {{ ghGrid }}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROJECTS ===== -->
+  <section id="projects" data-screen-label="Projects" style="max-width:1100px;margin:0 auto;padding:80px 24px 120px">
+    <div data-reveal="" style="margin-bottom:48px">
+      <p style="margin:0 0 8px;font-family:var(--mono);font-size:13px;color:var(--acc);letter-spacing:.1em">// projects</p>
+      <h2 style="margin:0;font-size:clamp(2rem,4.5vw,3rem);font-weight:800;letter-spacing:-.04em">Featured work</h2>
+    </div>
+
+    <!-- FEATURED — with border beam (Magic UI) -->
+    <div data-reveal="" style="margin-bottom:22px">
+      <div data-spotlight-card="" style="position:relative;padding:36px;border-radius:20px;border:1px solid var(--line2);background:var(--card);overflow:hidden;transition:border-color .3s" style-hover="border-color:rgba(220,38,38,0.3)">
+        <!-- border beam -->
+        <div data-border-beam="" style="position:absolute;inset:-1px;border-radius:21px;pointer-events:none;overflow:hidden;z-index:2">
+          <div style="position:absolute;width:80px;height:80px;border-radius:50%;background:var(--acc);filter:blur(20px);opacity:.6;offset-path:rect(0 100% 100% 0 round 21px);animation:border-beam 6s linear infinite"></div>
+        </div>
+        <div style="position:absolute;inset:0;background:radial-gradient(80% 60% at 100% 0%,var(--soft),transparent 50%);pointer-events:none"></div>
+        <div class="proj-hero-inner" style="position:relative;display:grid;grid-template-columns:1.1fr 0.9fr;gap:36px;align-items:center">
+          <div>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+              <span style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.1em;padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,0.02)">01</span>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);padding:5px 11px;border-radius:999px;border:1px solid var(--acc);background:var(--soft)">Featured</span>
+            </div>
+            <h3 style="margin:0 0 12px;font-size:1.7rem;font-weight:800;letter-spacing:-.03em">EduQuest</h3>
+            <p style="margin:0 0 22px;font-size:.98rem;line-height:1.65;color:var(--t2)">An AI-powered, gamified learning platform with a Retrieval-Augmented Generation tutor built on LangChain. Learners earn XP, climb leaderboards, and get context-aware answers from their course material.</p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:26px">
+              <span style="font-family:var(--mono);font-size:11px;color:var(--t2);padding:4px 10px;border-radius:7px;border:1px solid var(--line2);background:rgba(255,255,255,0.02)">React</span>
+              <span style="font-family:var(--mono);font-size:11px;color:var(--t2);padding:4px 10px;border-radius:7px;border:1px solid var(--line2);background:rgba(255,255,255,0.02)">Node</span>
+              <span style="font-family:var(--mono);font-size:11px;color:var(--t2);padding:4px 10px;border-radius:7px;border:1px solid var(--line2);background:rgba(255,255,255,0.02)">Express</span>
+              <span style="font-family:var(--mono);font-size:11px;color:var(--t2);padding:4px 10px;border-radius:7px;border:1px solid var(--line2);background:rgba(255,255,255,0.02)">MongoDB</span>
+              <span style="font-family:var(--mono);font-size:11px;color:var(--t2);padding:4px 10px;border-radius:7px;border:1px solid var(--line2);background:rgba(255,255,255,0.02)">LangChain</span>
+              <span style="font-family:var(--mono);font-size:11px;color:var(--t2);padding:4px 10px;border-radius:7px;border:1px solid var(--line2);background:rgba(255,255,255,0.02)">RAG</span>
+            </div>
+            <div style="display:flex;gap:12px">
+              <a href="#" target="_blank" rel="noreferrer" data-magnetic="" style="position:relative;display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:10px;background:var(--acc);color:#fff;font-size:13px;font-weight:700;overflow:hidden;box-shadow:0 8px 28px -8px var(--glow);transition:transform .2s" style-hover="transform:translateY(-2px)">
+                <span style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,0.15) 50%,transparent 80%);background-size:200% 100%;animation:shimmer 3s ease-in-out infinite;pointer-events:none"></span>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="position:relative"><path d="M7 17 17 7M9 7h8v8"/></svg>
+                <span style="position:relative">Live demo</span>
+              </a>
+              <a href="#" target="_blank" rel="noreferrer" data-magnetic="" style="display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:10px;border:1px solid var(--line2);color:var(--t1);font-size:13px;font-weight:600;transition:border-color .2s,background .2s" style-hover="border-color:var(--acc);background:var(--soft)">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg>
+                View code
+              </a>
+            </div>
+          </div>
+          <!-- project thumbnail preview -->
+          <div style="border-radius:14px;border:1px solid var(--line2);background:var(--bg);overflow:hidden">
+            <div style="display:flex;align-items:center;gap:6px;padding:9px 14px;border-bottom:1px solid var(--line);background:rgba(255,255,255,0.015)">
+              <span style="width:8px;height:8px;border-radius:50%;background:#ef4444"></span>
+              <span style="width:8px;height:8px;border-radius:50%;background:#eab308"></span>
+              <span style="width:8px;height:8px;border-radius:50%;background:#22c55e"></span>
+              <span style="flex:1;text-align:center;font-family:var(--mono);font-size:10px;color:var(--t3);margin-right:30px">eduquest.app</span>
+            </div>
+            <div style="position:relative;aspect-ratio:16/10;display:grid;place-items:center;background:linear-gradient(135deg,rgba(220,38,38,0.08) 0%,rgba(17,17,20,1) 50%,rgba(220,38,38,0.05) 100%)">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--t3)">
+                <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                <span style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;opacity:.5">PROJECT SCREENSHOT</span>
+              </div>
+              <div style="position:absolute;inset:0;border:1px dashed rgba(255,255,255,0.06);margin:12px;border-radius:8px;pointer-events:none"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SMALLER PROJECTS -->
+    <div class="proj-sm" style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+      <sc-for list="{{ smallProjects }}" as="p" hint-placeholder-count="2">
+        <article data-reveal="" data-spotlight-card="" style="position:relative;display:flex;flex-direction:column;padding:28px;border-radius:18px;border:1px solid var(--line);background:var(--card);overflow:hidden;transition:border-color .3s" style-hover="border-color:rgba(220,38,38,0.25)">
+          <div style="position:absolute;inset:0;background:radial-gradient(100% 80% at 100% 0%,var(--soft),transparent 50%);opacity:.5;pointer-events:none"></div>
+          <div style="position:relative;display:flex;align-items:center;gap:10px;margin-bottom:16px">
+            <span style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.1em;padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,0.02)">{{ p.num }}</span>
+          </div>
+          <h3 style="position:relative;margin:0 0 10px;font-size:1.25rem;font-weight:700;letter-spacing:-.01em">{{ p.name }}</h3>
+          <p style="position:relative;margin:0 0 20px;font-size:.93rem;line-height:1.6;color:var(--t2);flex:1">{{ p.desc }}</p>
+          <div style="position:relative;display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px">
+            <sc-for list="{{ p.stack }}" as="t" hint-placeholder-count="4">
+              <span style="font-family:var(--mono);font-size:11px;color:var(--t2);padding:4px 9px;border-radius:7px;border:1px solid var(--line2);background:rgba(255,255,255,0.02)">{{ t }}</span>
+            </sc-for>
+          </div>
+          <div style="position:relative;display:flex;gap:10px">
+            <a href="{{ p.live }}" target="_blank" rel="noreferrer" data-magnetic="" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px;border-radius:10px;background:var(--acc);color:#fff;font-size:13px;font-weight:700;transition:transform .2s" style-hover="transform:translateY(-1px)">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg> Live demo
+            </a>
+            <a href="{{ p.code }}" target="_blank" rel="noreferrer" data-magnetic="" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px;border-radius:10px;border:1px solid var(--line2);color:var(--t1);font-size:13px;font-weight:600;transition:border-color .2s,background .2s" style-hover="border-color:var(--acc);background:var(--soft)">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg> Code
+            </a>
+          </div>
+        </article>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ===== SKILLS ===== -->
+  <section id="skills" data-screen-label="Skills" style="max-width:1100px;margin:0 auto;padding:80px 24px 120px">
+    <div data-reveal="" style="margin-bottom:48px">
+      <p style="margin:0 0 8px;font-family:var(--mono);font-size:13px;color:var(--acc);letter-spacing:.1em">// skills</p>
+      <h2 style="margin:0;font-size:clamp(2rem,4.5vw,3rem);font-weight:800;letter-spacing:-.04em">Tech stack</h2>
+    </div>
+    <div class="skills-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
+      <sc-for list="{{ skillGroups }}" as="g" hint-placeholder-count="4">
+        <div data-reveal="" data-spotlight-card="" style="padding:26px;border-radius:16px;border:1px solid var(--line);background:var(--card);position:relative;overflow:hidden;transition:border-color .3s" style-hover="border-color:var(--line2)">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+            <div style="display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--soft);border:1px solid rgba(220,38,38,0.2);color:var(--acc2)">{{ g.icon }}</div>
+            <h3 style="margin:0;font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);font-family:var(--mono)">{{ g.title }}</h3>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="4">
+              <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:9px;border:1px solid var(--line2);background:rgba(255,255,255,0.015);font-size:13px;font-weight:500;transition:all .2s" style-hover="border-color:var(--acc);background:var(--soft);transform:translateY(-2px)">{{ it.dot }}{{ it.name }}</span>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ===== EDUCATION ===== -->
+  <section id="education" data-screen-label="Education" style="max-width:1100px;margin:0 auto;padding:80px 24px 120px">
+    <div data-reveal="" style="margin-bottom:48px">
+      <p style="margin:0 0 8px;font-family:var(--mono);font-size:13px;color:var(--acc);letter-spacing:.1em">// education</p>
+      <h2 style="margin:0;font-size:clamp(2rem,4.5vw,3rem);font-weight:800;letter-spacing:-.04em">Where I studied</h2>
+    </div>
+    <div data-reveal="" data-spotlight-card="" style="position:relative;display:flex;gap:24px;align-items:stretch;padding:30px;border-radius:18px;border:1px solid var(--line);background:var(--card);overflow:hidden">
+      <div style="position:absolute;inset:0;background:radial-gradient(70% 90% at 0% 0%,var(--soft),transparent 45%);pointer-events:none"></div>
+      <div style="position:relative;width:3px;border-radius:3px;background:linear-gradient(180deg,var(--acc),var(--acc2),transparent);flex-shrink:0"></div>
+      <div style="position:relative;flex:1">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--acc2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/><path d="M22 10v6"/></svg>
+          <span style="font-family:var(--mono);font-size:12px;color:var(--acc2);font-weight:600">2021 — 2025</span>
+        </div>
+        <h3 style="margin:0 0 4px;font-size:1.35rem;font-weight:800;letter-spacing:-.02em">BS — Software Engineering</h3>
+        <p style="margin:0 0 14px;color:var(--t3);font-size:.92rem;font-family:var(--mono)">Your University, Pakistan</p>
+        <p style="margin:0 0 18px;color:var(--t2);font-size:.93rem;line-height:1.6">Focused on full-stack web development, DSA, databases, and applied AI. Final-year project: an AI-powered learning platform with retrieval-augmented generation.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:7px">
+          <span style="font-family:var(--mono);font-size:11px;color:var(--t2);padding:4px 10px;border-radius:7px;border:1px solid var(--line2);background:rgba(255,255,255,0.02)">Web Engineering</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--t2);padding:4px 10px;border-radius:7px;border:1px solid var(--line2);background:rgba(255,255,255,0.02)">DSA</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--t2);padding:4px 10px;border-radius:7px;border:1px solid var(--line2);background:rgba(255,255,255,0.02)">Databases</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--t2);padding:4px 10px;border-radius:7px;border:1px solid var(--line2);background:rgba(255,255,255,0.02)">Applied AI</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RESUME CTA ===== -->
+  <section id="resume" data-screen-label="Resume" style="max-width:1100px;margin:0 auto;padding:0 24px 80px">
+    <div data-reveal="" data-spotlight-card="" style="position:relative;text-align:center;padding:clamp(48px,8vw,80px) 24px;border-radius:22px;border:1px solid var(--line2);background:var(--card);overflow:hidden">
+      <div style="position:absolute;inset:0;background:radial-gradient(55% 100% at 50% 0%,var(--soft),transparent 50%);pointer-events:none"></div>
+      <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.035) 1px,transparent 1px);background-size:30px 30px;mask-image:radial-gradient(50% 60% at 50% 30%,#000,transparent);-webkit-mask-image:radial-gradient(50% 60% at 50% 30%,#000,transparent);pointer-events:none"></div>
+      <div style="position:relative">
+        <h2 style="margin:0;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-.03em">Want the full picture<span style="color:var(--acc)">?</span></h2>
+        <p style="margin:14px auto 30px;max-width:440px;color:var(--t2);font-size:.98rem;line-height:1.6">Grab my résumé for a detailed look at everything.</p>
+        <a href="assets/M-Rizwan-Ali-Resume.pdf" download data-magnetic="" style="position:relative;display:inline-flex;align-items:center;gap:10px;padding:14px 26px;border-radius:12px;background:var(--acc);color:#fff;font-weight:700;font-size:15px;overflow:hidden;box-shadow:0 14px 40px -12px var(--glow);transition:transform .2s" style-hover="transform:translateY(-2px)">
+          <span style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,0.15) 50%,transparent 80%);background-size:200% 100%;animation:shimmer 3s ease-in-out infinite;pointer-events:none"></span>
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:relative"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
+          <span style="position:relative">Download résumé</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact" data-screen-label="Contact" style="max-width:1100px;margin:0 auto;padding:80px 24px 80px">
+    <div data-reveal="" data-spotlight-card="" style="position:relative;padding:clamp(48px,8vw,80px) 24px;border-radius:22px;border:1px solid var(--line2);background:var(--bg2);overflow:hidden;text-align:center">
+      <div style="position:absolute;inset:0;background:radial-gradient(50% 80% at 50% 100%,var(--soft),transparent 60%);pointer-events:none"></div>
+      <div style="position:relative">
+        <p style="margin:0 0 8px;font-family:var(--mono);font-size:13px;color:var(--acc);letter-spacing:.1em">// contact</p>
+        <h2 style="margin:0;font-size:clamp(2.2rem,5.5vw,3.6rem);font-weight:800;letter-spacing:-.04em">Let's build something</h2>
+        <p style="margin:16px auto 0;max-width:440px;color:var(--t2);font-size:1.02rem;line-height:1.6">Have a role, a project, or just want to say hi?</p>
+        <a href="mailto:rizwan@example.com" data-magnetic="" style="position:relative;display:inline-flex;align-items:center;gap:10px;margin-top:32px;padding:15px 28px;border-radius:14px;background:var(--acc);color:#fff;font-weight:700;font-size:15px;overflow:hidden;box-shadow:0 14px 40px -12px var(--glow);transition:transform .2s" style-hover="transform:translateY(-2px)">
+          <span style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,0.15) 50%,transparent 80%);background-size:200% 100%;animation:shimmer 3s ease-in-out infinite;pointer-events:none"></span>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:relative"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+          <span style="position:relative">rizwan@example.com</span>
+        </a>
+        <div style="margin-top:28px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <sc-for list="{{ socials }}" as="s" hint-placeholder-count="4">
+            <a href="{{ s.href }}" target="_blank" rel="noreferrer" data-magnetic="" aria-label="{{ s.label }}" title="{{ s.label }}" style="display:grid;place-items:center;width:44px;height:44px;border-radius:12px;border:1px solid var(--line2);background:rgba(255,255,255,0.02);color:var(--t3);transition:all .2s" style-hover="color:var(--acc);border-color:var(--acc);background:var(--soft)">{{ s.icon }}</a>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="border-top:1px solid var(--line);padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;max-width:1100px;margin:20px auto 0">
+    <span style="font-size:11px;color:var(--t3);font-family:var(--mono)">© 2026 M Rizwan Ali</span>
+    <a href="#home" style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--t3);font-family:var(--mono);transition:color .2s" style-hover="color:var(--acc)">Back to top ↑</a>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {};
+
+  svg(children, opts) {
+    return React.createElement('svg', Object.assign({ viewBox:'0 0 24 24', width:16, height:16, fill:'currentColor', style:{display:'block'} }, opts||{}), children);
+  }
+  stroke(d, sz) {
+    return React.createElement('svg', { viewBox:'0 0 24 24', width:sz||17, height:sz||17, fill:'none', stroke:'currentColor', strokeWidth:1.8, strokeLinecap:'round', strokeLinejoin:'round', style:{display:'block'} },
+      d.map((p,i)=>React.createElement('path',{key:i,d:p})));
+  }
+  path(d){ return React.createElement('path',{ d }); }
+
+  get socials() {
+    const gh = 'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12';
+    const li = 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z';
+    const wa = 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413';
+    return [
+      { label:'GitHub',   href:'https://github.com/your-username',     icon: this.svg(this.path(gh),{width:15,height:15}) },
+      { label:'LinkedIn', href:'https://linkedin.com/in/your-handle',  icon: this.svg(this.path(li),{width:15,height:15}) },
+      { label:'Email',    href:'mailto:rizwan@example.com',            icon: this.svg(this.path('M22 4H2C.9 4 0 4.9 0 6v12c0 1.1.9 2 2 2h20c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-10 6L2 8V6l10 6 10-6v2z'),{width:15,height:15}) },
+      { label:'WhatsApp', href:'https://wa.me/920000000000',           icon: this.svg(this.path(wa),{width:15,height:15}) },
+    ];
+  }
+
+  techIcon(name, color) {
+    const s = 14;
+    const ico = (paths, fill) => React.createElement('svg', { viewBox:'0 0 24 24', width:s, height:s, fill:fill||'none', stroke:fill?'none':color, strokeWidth:fill?0:2, strokeLinecap:'round', strokeLinejoin:'round', style:{display:'block',flexShrink:0} }, paths.map((d,i)=>React.createElement('path',{key:i,d})));
+    const txt = (t) => React.createElement('span', { style:{fontFamily:'var(--mono)',fontSize:'9px',fontWeight:700,color,lineHeight:1,flexShrink:0,letterSpacing:'.02em'} }, t);
+    const icons = {
+      'HTML':     ()=> txt('</>')  ,
+      'CSS':      ()=> ico(['M12 2l-2 18M6 6l-4 6 4 6M18 6l4 6-4 6'], color),
+      'JavaScript':()=> txt('JS'),
+      'React':    ()=> React.createElement('svg',{viewBox:'0 0 24 24',width:s,height:s,fill:'none',stroke:color,strokeWidth:1.6,style:{display:'block',flexShrink:0}},
+        React.createElement('ellipse',{cx:12,cy:12,rx:10,ry:4}),
+        React.createElement('ellipse',{cx:12,cy:12,rx:10,ry:4,transform:'rotate(60 12 12)'}),
+        React.createElement('ellipse',{cx:12,cy:12,rx:10,ry:4,transform:'rotate(120 12 12)'}),
+        React.createElement('circle',{cx:12,cy:12,r:1.5,fill:color,stroke:'none'})
+      ),
+      'Node.js':  ()=> txt('N'),
+      'Express':  ()=> txt('Ex'),
+      'Tailwind': ()=> React.createElement('svg',{viewBox:'0 0 24 24',width:s,height:s,fill:color,style:{display:'block',flexShrink:0}},
+        React.createElement('path',{d:'M12 6C9.33 6 7.67 7.33 7 10c1-1.33 2.17-1.83 3.5-1.5.76.19 1.3.74 1.9 1.35C13.45 10.92 14.73 12 17 12c2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.3-.74-1.9-1.35C15.55 7.08 14.27 6 12 6zM7 12c-2.67 0-4.33 1.33-5 4 1-1.33 2.17-1.83 3.5-1.5.76.19 1.3.74 1.9 1.35C8.45 16.92 9.73 18 12 18c2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.3-.74-1.9-1.35C10.55 13.08 9.27 12 7 12z'})
+      ),
+      'LangChain':()=> ico(['M13 2L3 14h9l-1 8 10-12h-9l1-8'],color),
+      'MongoDB':  ()=> React.createElement('svg',{viewBox:'0 0 24 24',width:s,height:s,fill:color,style:{display:'block',flexShrink:0}},
+        React.createElement('path',{d:'M13.74 4.23c-.84-1.57-1.48-2.3-1.62-2.49-.14.19-.78.92-1.62 2.49C8.88 7.17 5.1 11.55 5.1 15.24c0 3.55 2.78 6.76 6.37 6.76h1.06c3.59 0 6.37-3.21 6.37-6.76 0-3.69-3.78-8.07-5.16-11.01zM12.5 20.05v-7.93c0-.15.15-.28.3-.22.55.23 2.63 2.07 2.63 4.2 0 2.05-1.56 3.71-2.93 3.95z'})
+      ),
+      'PostgreSQL':()=> ico(['M12 8c4.4 0 8-1.3 8-3s-3.6-3-8-3-8 1.3-8 3 3.6 3 8 3Z','M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5','M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6']),
+      'Git':      ()=> ico(['M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4'],color),
+      'Postman':  ()=> ico(['M13 2L3 14h9l-1 8 10-12h-9l1-8'],color),
+    };
+    return (icons[name] || (()=>this.dot2(color)))();
+  }
+
+  dot2(color) {
+    return React.createElement('span', { style:{ width:'8px', height:'8px', borderRadius:'50%', background:color, boxShadow:'0 0 6px '+color+'55', flexShrink:0 } });
+  }
+
+  get skillGroups() {
+    const mk = (arr)=>arr.map(([name,color])=>({ name, dot:this.techIcon(name,color) }));
+    return [
+      { title:'Languages', icon:this.stroke(['m18 16 4-4-4-4','M6 8l-4 4 4 4','m14.5 4-5 16'],16), items: mk([['HTML','#E34F26'],['CSS','#1572B6'],['JavaScript','#F7DF1E']]) },
+      { title:'Frameworks', icon:this.stroke(['M12 2 2 7l10 5 10-5-10-5Z','m2 17 10 5 10-5','m2 12 10 5 10-5'],16), items: mk([['React','#61DAFB'],['Node.js','#5FA04E'],['Express','#cfcfcf'],['Tailwind','#38BDF8'],['LangChain','#1FA37C']]) },
+      { title:'Databases', icon:this.stroke(['M12 8c4.4 0 8-1.3 8-3s-3.6-3-8-3-8 1.3-8 3 3.6 3 8 3Z','M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5','M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6'],16), items: mk([['MongoDB','#47A248'],['PostgreSQL','#4169E1']]) },
+      { title:'Tools', icon:this.stroke(['M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.8 2.8-2-2 2.8-2.8Z'],16), items: mk([['Git','#F05032'],['Postman','#FF6C37']]) },
+    ];
+  }
+
+  get smallProjects() {
+    return [
+      { num:'02', name:'DevCollab', desc:'Real-time collaborative code workspace with live cursors and instant sync via Socket.IO. Teams pair-program and share snippets in shared rooms.', stack:['React','Node','Socket.IO','MongoDB'], live:'#', code:'#' },
+      { num:'03', name:'ShopSphere', desc:'Full-stack e-commerce store with cart, Stripe checkout, search, and an admin dashboard for orders and inventory.', stack:['React','Express','MongoDB','Stripe'], live:'#', code:'#' },
+    ];
+  }
+
+  // GitHub contribution grid (fake heatmap)
+  get ghGrid() {
+    const weeks = 20, days = 7;
+    const levels = ['rgba(255,255,255,0.03)','rgba(220,38,38,0.15)','rgba(220,38,38,0.3)','rgba(220,38,38,0.5)','rgba(220,38,38,0.75)'];
+    // deterministic pseudo-random
+    const seed = [3,1,0,2,4,1,0,3,2,1,0,0,2,3,1,4,0,2,1,3,0,1,2,0,3,4,1,2,0,3,1,0,2,1,3,0,4,2,1,0,3,1,2,0,1,3,2,4,0,1,2,3,0,1,4,2,3,1,0,2,1,3,0,2,4,1,0,3,2,1,0,2,3,1,0,4,2,1,3,0,2,1,0,3,2,4,1,0,3,2,1,0,2,3,1,4,0,2,1,3,0,1,2,0,3,4,1,2,0,3,1,0,2,1,3,0,4,2,1,0,3,1,2,0,1,3,2,4,0,1,2,3,0,1,4,2,3,1,0,2];
+    const cells = [];
+    for(let w=0;w<weeks;w++){
+      for(let d=0;d<days;d++){
+        const idx = (w*days+d)%seed.length;
+        cells.push(React.createElement('div',{key:w+'-'+d,style:{width:'10px',height:'10px',borderRadius:'2px',background:levels[seed[idx]],gridRow:d+1,gridColumn:w+1}}));
+      }
+    }
+    return React.createElement('div',{style:{display:'grid',gridTemplateRows:'repeat(7,10px)',gridTemplateColumns:'repeat('+weeks+',10px)',gap:'3px'}},cells);
+  }
+
+  componentDidMount(){
+    requestAnimationFrame(()=>this.init());
+  }
+
+  init(){
+    const root = this.root; if(!root) return;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const touch = matchMedia('(hover: none)').matches;
+
+    // ---- scroll reveals ----
+    const items = [...root.querySelectorAll('[data-reveal]')];
+    const ease = 'cubic-bezier(.16,.75,.25,1)';
+    items.forEach(el=>{ el.style.opacity='0'; el.style.transform='translateY(34px)'; el.style.transition=`opacity .9s ${ease}, transform .9s ${ease}`; el.style.willChange='opacity,transform'; });
+    const reveal = (el)=>{ el.style.opacity='1'; el.style.transform='none'; };
+    if(reduce){ items.forEach(reveal); }
+    else if('IntersectionObserver' in window){
+      const io = new IntersectionObserver((ents)=>{
+        ents.forEach(e=>{ if(e.isIntersecting){ const el=e.target; el.style.transitionDelay=(el.dataset.revealDelay||0)+'ms'; reveal(el); io.unobserve(el); } });
+      },{ threshold:0.08, rootMargin:'0px 0px -5% 0px' });
+      items.forEach(el=>io.observe(el));
+    } else items.forEach(reveal);
+    setTimeout(()=>items.forEach(el=>{ if(el.style.opacity==='0') reveal(el); }),4000);
+
+    // ---- scroll progress + nav ----
+    const bar = root.querySelector('[data-progress]');
+    const navBar = root.querySelector('[data-nav-bar]');
+    // ---- tracing beam ----
+    const traceLine = root.querySelector('[data-trace-line]');
+    const traceDot = root.querySelector('[data-trace-dot]');
+    if(traceLine && !touch) traceLine.style.display='block';
+
+    const onScroll = ()=>{
+      const h = document.documentElement.scrollHeight - innerHeight;
+      const p = h>0 ? scrollY/h : 0;
+      if(bar) bar.style.width = (p*100)+'%';
+      if(traceDot) traceDot.style.top = (p*100)+'%';
+      if(navBar){
+        if(scrollY>30){ navBar.style.background='rgba(9,9,11,0.75)'; navBar.style.backdropFilter='blur(16px)'; }
+        else { navBar.style.background='transparent'; navBar.style.backdropFilter='none'; }
+      }
+    };
+    addEventListener('scroll', onScroll,{passive:true}); onScroll();
+
+    // ---- active nav link ----
+    const links = [...root.querySelectorAll('[data-nav]')];
+    const setActive = (id)=>links.forEach(l=>{
+      const on = l.getAttribute('data-nav')===id;
+      l.style.color = on ? 'var(--t1)' : 'var(--t3)';
+      l.style.background = on ? 'var(--soft)' : 'transparent';
+    });
+    if('IntersectionObserver' in window){
+      const so = new IntersectionObserver((ents)=>{
+        ents.forEach(e=>{ if(e.isIntersecting) setActive(e.target.id); });
+      },{ rootMargin:'-45% 0px -50% 0px' });
+      ['home','about','projects','skills','education','contact'].forEach(id=>{ const s=root.querySelector('#'+id); if(s) so.observe(s); });
+    }
+
+    if(touch || reduce) return;
+
+    // ---- custom cursor ----
+    const ring = root.querySelector('[data-cursor-ring]');
+    const cdot = root.querySelector('[data-cursor-dot]');
+    let mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; if(cdot) cdot.style.transform=`translate(${mx-2.5}px,${my-2.5}px)`; });
+    const loop=()=>{ rx+=(mx-rx)*0.15; ry+=(my-ry)*0.15; if(ring) ring.style.transform=`translate(${rx-14}px,${ry-14}px)`; requestAnimationFrame(loop); };
+    loop();
+    root.querySelectorAll('a,button,[data-magnetic]').forEach(el=>{
+      el.addEventListener('mouseenter',()=>{ if(ring){ ring.style.width='44px'; ring.style.height='44px'; ring.style.background='var(--soft)'; }});
+      el.addEventListener('mouseleave',()=>{ if(ring){ ring.style.width='28px'; ring.style.height='28px'; ring.style.background='transparent'; }});
+    });
+
+    // ---- spotlight effect on cards (Aceternity) ----
+    const spotlight = root.querySelector('[data-spotlight]');
+    const cards = [...root.querySelectorAll('[data-spotlight-card]')];
+    cards.forEach(card=>{
+      card.style.position = card.style.position || 'relative';
+      card.style.overflow = 'hidden';
+      // create per-card spotlight overlay
+      const glow = document.createElement('div');
+      glow.style.cssText='position:absolute;inset:0;opacity:0;transition:opacity .3s;pointer-events:none;z-index:1;border-radius:inherit';
+      card.appendChild(glow);
+      card.addEventListener('mousemove', e=>{
+        const r = card.getBoundingClientRect();
+        const x = e.clientX - r.left, y = e.clientY - r.top;
+        glow.style.opacity='1';
+        glow.style.background=`radial-gradient(350px circle at ${x}px ${y}px, rgba(220,38,38,0.06), transparent 60%)`;
+      });
+      card.addEventListener('mouseleave', ()=>{ glow.style.opacity='0'; });
+    });
+
+    // ---- magnetic buttons ----
+    root.querySelectorAll('[data-magnetic]').forEach(el=>{
+      el.style.transition='transform .25s cubic-bezier(.2,.8,.2,1)';
+      el.addEventListener('mousemove', e=>{
+        const r=el.getBoundingClientRect();
+        const dx=e.clientX-(r.left+r.width/2), dy=e.clientY-(r.top+r.height/2);
+        el.style.transform=`translate(${dx*0.22}px,${dy*0.32}px)`;
+      });
+      el.addEventListener('mouseleave',()=>{ el.style.transform='translate(0,0)'; });
+    });
+
+    // ---- tilt ----
+    root.querySelectorAll('[data-tilt]').forEach(el=>{
+      el.style.transformStyle='preserve-3d';
+      el.style.transition='transform .35s ease';
+      el.addEventListener('mousemove', e=>{
+        const r=el.getBoundingClientRect();
+        const px=(e.clientX-r.left)/r.width-0.5, py=(e.clientY-r.top)/r.height-0.5;
+        el.style.transform=`perspective(800px) rotateX(${-py*5}deg) rotateY(${px*5}deg) translateY(-2px)`;
+      });
+      el.addEventListener('mouseleave',()=>{ el.style.transform='perspective(800px) rotateX(0) rotateY(0) translateY(0)'; });
+    });
+
+    // ---- hero parallax ----
+    const pars = [...root.querySelectorAll('[data-par]')];
+    const hero = root.querySelector('#home');
+    if(hero){
+      hero.addEventListener('mousemove', e=>{
+        const cx=e.clientX/innerWidth-0.5, cy=e.clientY/innerHeight-0.5;
+        pars.forEach(p=>{ const f=parseFloat(p.getAttribute('data-par'))*18; p.style.transform=`translate(${cx*f}px,${cy*f}px)`; });
+      });
+      hero.addEventListener('mouseleave',()=>pars.forEach(p=>p.style.transform='translate(0,0)'));
+    }
+
+    // ---- rotating roles ----
+    const roleEl = root.querySelector('[data-roles]');
+    if(roleEl){
+      const words=['production-ready','AI-powered','pixel-perfect','well-tested','scalable'];
+      let i=0; roleEl.style.transition='opacity .4s ease';
+      setInterval(()=>{ roleEl.style.opacity='0'; setTimeout(()=>{ i=(i+1)%words.length; roleEl.textContent=words[i]; roleEl.style.opacity='1'; },380); },2800);
+    }
+  }
+
+  renderVals(){
+    return {
+      rootRef: el=>{ if(el) this.root=el; },
+      socials: this.socials,
+      skillGroups: this.skillGroups,
+      smallProjects: this.smallProjects,
+      ghGrid: this.ghGrid,
+    };
+  }
+}
+</script>
+</body>
+</html>
