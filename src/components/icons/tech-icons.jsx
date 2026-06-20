@@ -1,6 +1,21 @@
 // Brand icon SVGs hand-ported verbatim from Portfolio.dc.html so the marks
 // match the approved design pixel-for-pixel (skips the simple-icons package).
 
+import {
+  Atom,
+  Webhook,
+  ScanSearch,
+  Sparkles,
+  FileSearch,
+  BrainCircuit,
+  KeyRound,
+  ShieldCheck,
+  Lock,
+  CloudUpload,
+  Upload,
+  Container,
+} from "lucide-react";
+
 export function ReactIcon({ size = 24, color = "#61DAFB", ...props }) {
   return (
     <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke={color} strokeWidth="1.2" {...props}>
@@ -33,6 +48,22 @@ export function MongoDBIcon({ size = 24, color = "#47A248", ...props }) {
     <svg viewBox="0 0 24 24" width={size} height={size} fill={color} {...props}>
       <path d="M13.74 4.23c-.84-1.57-1.48-2.3-1.62-2.49-.14.19-.78.92-1.62 2.49C8.88 7.17 5.1 11.55 5.1 15.24c0 3.55 2.78 6.76 6.37 6.76h1.06c3.59 0 6.37-3.21 6.37-6.76 0-3.69-3.78-8.07-5.16-11.01zM12.5 20.05v-7.93c0-.15.15-.28.3-.22.55.23 2.63 2.07 2.63 4.2 0 2.05-1.56 3.71-2.93 3.95z" />
     </svg>
+  );
+}
+
+export function TypeScriptIcon({ size = 24, color = "#3178C6", ...props }) {
+  return (
+    <span style={{ fontFamily: "var(--font-mono)", fontSize: size, fontWeight: 800, color, lineHeight: 1 }} {...props}>
+      TS
+    </span>
+  );
+}
+
+export function CppIcon({ size = 24, color = "#00599C", ...props }) {
+  return (
+    <span style={{ fontFamily: "var(--font-mono)", fontSize: size * 0.85, fontWeight: 800, color, lineHeight: 1 }} {...props}>
+      C++
+    </span>
   );
 }
 
@@ -105,6 +136,16 @@ export function PostgreSQLIcon({ size = 24, color = "#4169E1", ...props }) {
   );
 }
 
+export function MySQLIcon({ size = 24, color = "#00758F", ...props }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <ellipse cx="12" cy="6" rx="8" ry="3" />
+      <path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6" />
+      <path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" />
+    </svg>
+  );
+}
+
 export function ExpressIcon({ size = 24, color = "#cfcfcf", ...props }) {
   return (
     <span style={{ fontFamily: "var(--font-mono)", fontSize: size * 0.8, fontWeight: 800, color, lineHeight: 1 }} {...props}>
@@ -155,17 +196,41 @@ export function MailIcon({ size = 15, color = "currentColor", ...props }) {
 }
 
 export const TECH_ICONS = {
+  // Languages
+  "C++": CppIcon,
   HTML: HTML5Icon,
   CSS: CSSSwatchIcon,
   JavaScript: JavaScriptIcon,
+  TypeScript: TypeScriptIcon,
+  // Frontend
   React: ReactIcon,
+  "Next.js": NextJSIcon,
+  Redux: Atom,
+  Tailwind: TailwindIcon,
+  // Backend
   "Node.js": NodeIcon,
   Express: ExpressIcon,
-  Tailwind: TailwindIcon,
-  LangChain: LangChainIcon,
+  "REST APIs": Webhook,
+  // Databases
   MongoDB: MongoDBIcon,
   PostgreSQL: PostgreSQLIcon,
+  MySQL: MySQLIcon,
+  "Vector Search": ScanSearch,
+  // AI / LLM
+  LangChain: LangChainIcon,
+  Gemini: Sparkles,
+  RAG: FileSearch,
+  "LLM Integration": BrainCircuit,
+  // Auth & Cloud
+  JWT: KeyRound,
+  "OAuth 2.0": ShieldCheck,
+  bcrypt: Lock,
+  Cloudinary: CloudUpload,
+  Multer: Upload,
+  // Dev tools
   Git: GitIcon,
+  GitHub: GitHubIcon,
+  Docker: Container,
   Postman: PostmanIcon,
 };
 

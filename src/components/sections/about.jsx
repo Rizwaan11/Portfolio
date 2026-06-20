@@ -33,7 +33,7 @@ const LINES = [
   [{ t: "}", c: PN }],
 ];
 
-const TABS = ["about.js", "stack.json", "now.md"];
+const TABS = ["about.js"];
 
 const TIMELINE = [
   { year: "2022", title: "Started BS Software Engineering", desc: "Began my degree at University of Sargodha — fell in love with building for the web." },
@@ -116,13 +116,6 @@ export function About() {
               <span className="text-[1.05rem] font-bold tracking-tight text-t1">M Rizwan Ali</span>
               <span className="font-mono text-[11px] text-accent-light">{"<MERN Stack Developer />"}</span>
             </div>
-            <div className="absolute right-3.5 top-3.5 z-[3] inline-flex items-center gap-1.5 rounded-full border border-line-visible bg-bg/60 px-3 py-1.5 text-[11px] font-semibold backdrop-blur-[8px]">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
-              </span>
-              Available
-            </div>
           </div>
         </Reveal>
 
@@ -203,9 +196,6 @@ export function About() {
               ))}
             </div>
             <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 border-t border-line bg-accent/[0.06] px-3.5 py-2 font-mono text-[10px] text-t3">
-              <span className="flex items-center gap-1.5 text-emerald-400">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> open to work
-              </span>
               <span>📍 Pakistan</span>
               <span>⚡ MERN + AI</span>
               <span className="ml-auto">UTF-8 · JS</span>

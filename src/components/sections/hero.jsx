@@ -8,7 +8,7 @@ import { FloatingIcons } from "@/components/ui/floating-icons";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { MagneticButton } from "@/components/ui/magnetic-button";
 import { SOCIAL_ICONS } from "@/components/icons/tech-icons";
-import { socials, rotatingWords, heroTerminal } from "@/lib/data";
+import { socials, rotatingWords } from "@/lib/data";
 
 export function Hero() {
   const heroRef = useRef(null);
@@ -132,16 +132,6 @@ export function Hero() {
             </AnimatePresence>{" "}
             products.
           </p>
-        </Reveal>
-
-        <Reveal delay={0.21}>
-          <div className="mt-5 inline-flex items-center gap-2 rounded-[10px] border border-line bg-white/[0.025] px-4 py-2 font-mono text-xs text-t3">
-            <span className="text-green-500">❯</span>
-            <span>{heroTerminal.variable}</span>
-            <span className="text-t3">=</span>
-            <span className="text-accent-light">&quot;{heroTerminal.value}&quot;</span>
-            <span className="ml-0.5 inline-block h-[15px] w-[7px] animate-[cursor-blink_1s_step-end_infinite] bg-accent" />
-          </div>
         </Reveal>
 
         <Reveal delay={0.26}>

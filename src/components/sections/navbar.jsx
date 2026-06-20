@@ -42,15 +42,15 @@ export function Navbar() {
             as="a"
             href="#home"
             aria-label="Home"
-            className="flex items-center gap-2 text-lg font-extrabold text-t1"
+            className="flex shrink-0 items-center gap-2 text-lg font-extrabold text-t1"
           >
             <span className="relative h-8 w-8 overflow-hidden rounded-full border border-line-visible">
               <Image src="/logo.png" alt="M Rizwan Ali" fill className="object-cover object-top" sizes="32px" />
             </span>
-            <span>MR<span className="text-accent">.</span></span>
+            <span>RA<span className="text-accent">.</span></span>
           </MagneticButton>
 
-          <div className="hidden items-center gap-1 md:flex">
+          <div className="hidden flex-1 items-center justify-center gap-1 md:flex">
             {mainLinks.map((link) => (
               <a
                 key={link.id}
@@ -70,15 +70,16 @@ export function Navbar() {
                 <span className="relative z-10">{link.label}</span>
               </a>
             ))}
-            {resumeLink && (
-              <a
-                href={`#${resumeLink.id}`}
-                className="rounded-xl px-3 py-1.5 text-sm font-medium text-accent-bright transition-colors hover:bg-accent-soft"
-              >
-                {resumeLink.label}
-              </a>
-            )}
           </div>
+
+          {resumeLink && (
+            <a
+              href={`#${resumeLink.id}`}
+              className="hidden shrink-0 rounded-xl px-3 py-1.5 text-sm font-medium text-accent-bright transition-colors hover:bg-accent-soft md:block"
+            >
+              {resumeLink.label}
+            </a>
+          )}
 
           <button
             type="button"
