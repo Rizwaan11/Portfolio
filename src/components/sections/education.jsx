@@ -27,7 +27,12 @@ export function Education() {
               <span className="font-mono text-xs font-semibold text-accent-bright">{education.period}</span>
             </div>
             <h3 className="mb-1 text-[1.35rem] font-extrabold tracking-[-0.02em]">{education.degree}</h3>
-            <p className="mb-3.5 font-mono text-[0.92rem] text-t3">{education.school}</p>
+            <p className="mb-3 font-mono text-[0.92rem] text-t3">{education.school}</p>
+            {education.cgpa && (
+              <div className="mb-3.5 inline-flex items-center gap-2 rounded-[7px] border border-accent/30 bg-accent-soft px-2.5 py-1 font-mono text-[12px] font-semibold text-accent-bright">
+                CGPA {education.cgpa}
+              </div>
+            )}
             <p className="mb-[18px] text-[0.93rem] leading-[1.6] text-t2">{education.desc}</p>
             <div className="flex flex-wrap gap-[7px]">
               {education.tags.map((tag) => (

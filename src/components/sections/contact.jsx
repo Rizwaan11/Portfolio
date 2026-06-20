@@ -117,9 +117,12 @@ export function Contact() {
 
             <a
               href={`mailto:${contact.email}`}
-              className="mt-6 inline-flex items-center gap-2 font-mono text-[12.5px] text-t3 transition-colors hover:text-accent"
+              className="group mt-6 inline-flex items-center gap-2 font-mono text-[12.5px] text-t2 transition-colors hover:text-t1"
             >
-              <Mail size={14} /> or email me directly at {contact.email}
+              <Mail size={14} className="text-accent-bright" /> or email me directly at{" "}
+              <span className="text-accent-bright underline decoration-accent/40 underline-offset-4 group-hover:decoration-accent">
+                {contact.email}
+              </span>
             </a>
 
             <div className="mt-7 flex flex-wrap justify-center gap-2.5">
@@ -134,7 +137,7 @@ export function Contact() {
                     rel="noreferrer"
                     aria-label={s.label}
                     title={s.label}
-                    className="grid h-11 w-11 place-items-center rounded-xl border border-line-visible bg-white/[0.02] text-t3 transition-colors hover:border-accent hover:bg-accent-soft hover:text-accent"
+                    className="grid h-11 w-11 place-items-center rounded-xl border border-line-visible bg-white/[0.05] text-t2 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft hover:text-accent-bright hover:shadow-[0_8px_24px_-8px_var(--color-accent-glow)]"
                   >
                     <Icon size={18} />
                   </MagneticButton>

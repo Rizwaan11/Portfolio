@@ -90,13 +90,6 @@ export function Hero() {
       <FloatingIcons mouseX={mouseX} mouseY={mouseY} />
 
       <div className="relative z-20 flex flex-col items-center">
-        <Reveal>
-          <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-line-visible bg-bg/60 px-4 py-2 text-[13px] text-t2 backdrop-blur-[10px]">
-            <span className="h-2 w-2 animate-[pulse_2.4s_ease-in-out_infinite] rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]" />
-            Open to internships &amp; junior roles
-          </div>
-        </Reveal>
-
         <Reveal delay={0.05}>
           <p className="mb-2 font-mono text-sm tracking-[0.08em] text-accent">{"// Hey, I'm"}</p>
         </Reveal>
@@ -180,7 +173,7 @@ export function Hero() {
                     rel="noreferrer"
                     aria-label={s.label}
                     title={s.label}
-                    className="grid h-[34px] w-[34px] place-items-center rounded-[9px] border border-line bg-white/[0.02] text-t3 transition-colors hover:border-accent hover:bg-accent-soft hover:text-accent"
+                    className="grid h-[38px] w-[38px] place-items-center rounded-[10px] border border-line-visible bg-white/[0.05] text-t2 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft hover:text-accent-bright hover:shadow-[0_8px_22px_-8px_var(--color-accent-glow)]"
                   >
                     <Icon />
                   </MagneticButton>

@@ -144,8 +144,9 @@ export const education = {
   period: "2022 — 2026",
   degree: "BS — Software Engineering",
   school: "University of Sargodha",
-  desc: "Focused on full-stack web development, DSA, databases, and applied AI. Final-year project: an AI-powered learning platform with retrieval-augmented generation.",
-  tags: ["Web Engineering", "DSA", "Databases", "Applied AI"],
+  cgpa: "3.3 / 4.0",
+  desc: "Focused on full-stack web development, databases, and applied AI. Final-year project: an AI-powered learning platform with retrieval-augmented generation.",
+  tags: ["Web Engineering", "Databases", "Applied AI"],
 };
 
 export const resumeCta = {
