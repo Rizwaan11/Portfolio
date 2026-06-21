@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence, useReducedMotion, useMotionValue } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Reveal } from "@/components/ui/reveal";
-import { ParticleField } from "@/components/ui/particle-field";
+import { HeroBackground } from "@/components/ui/hero-background";
 import { FloatingIcons } from "@/components/ui/floating-icons";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { MagneticButton } from "@/components/ui/magnetic-button";
@@ -11,49 +11,7 @@ import { SOCIAL_ICONS } from "@/components/icons/tech-icons";
 import { socials, rotatingWords } from "@/lib/data";
 
 export function Hero() {
-  const heroRef = useRef(null);
-  const topGlowRef = useRef(null);
-  const bottomGlowRef = useRef(null);
-  const nameRef = useRef(null);
   const [wordIndex, setWordIndex] = useState(0);
-  const reduceMotion = useReducedMotion();
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  useEffect(() => {
-    const hero = heroRef.current;
-    if (!hero || matchMedia("(hover: none)").matches || reduceMotion) return;
-
-    const targets = [
-      { el: topGlowRef.current, factor: 0.3 },
-      { el: bottomGlowRef.current, factor: 0.6 },
-      { el: nameRef.current, factor: 0.1 },
-    ];
-
-    const handleMove = (e) => {
-      const cx = e.clientX / window.innerWidth - 0.5;
-      const cy = e.clientY / window.innerHeight - 0.5;
-      mouseX.set(cx);
-      mouseY.set(cy);
-      targets.forEach(({ el, factor }) => {
-        if (!el) return;
-        const f = factor * 18;
-        el.style.transform = `translate(${cx * f}px, ${cy * f}px)`;
-      });
-    };
-    const handleLeave = () => {
-      mouseX.set(0);
-      mouseY.set(0);
-      targets.forEach(({ el }) => el && (el.style.transform = "translate(0,0)"));
-    };
-
-    hero.addEventListener("mousemove", handleMove);
-    hero.addEventListener("mouseleave", handleLeave);
-    return () => {
-      hero.removeEventListener("mousemove", handleMove);
-      hero.removeEventListener("mouseleave", handleLeave);
-    };
-  }, [reduceMotion]);
 
   useEffect(() => {
     const interval = setInterval(() => setWordIndex((i) => (i + 1) % rotatingWords.length), 2800);
@@ -63,41 +21,17 @@ export function Hero() {
   return (
     <section
       id="home"
-      ref={heroRef}
       className="relative flex min-h-screen flex-col items-center justify-start overflow-hidden px-6 pt-[130px] pb-[90px] text-center"
     >
-      <ParticleField />
-      <div
-        ref={topGlowRef}
-        className="pointer-events-none absolute -top-[15%] left-1/2 h-[75%] w-[140%] -translate-x-1/2"
-        style={{ background: "radial-gradient(50% 60% at 50% 0%, var(--color-accent-soft), transparent 70%)" }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0 animate-[gridpan_20s_linear_infinite]"
-        style={{
-          backgroundImage: "radial-gradient(rgba(255,255,255,0.025) 1px, transparent 1px)",
-          backgroundSize: "44px 44px",
-          WebkitMaskImage: "radial-gradient(55% 45% at 50% 42%, #000, transparent 75%)",
-          maskImage: "radial-gradient(55% 45% at 50% 42%, #000, transparent 75%)",
-        }}
-      />
-      <div
-        ref={bottomGlowRef}
-        className="pointer-events-none absolute bottom-[3%] left-1/2 h-[200px] w-[min(900px,95vw)] -translate-x-1/2 opacity-35 blur-[12px] animate-[pulse_5s_ease-in-out_infinite]"
-        style={{ background: "radial-gradient(50% 100% at 50% 100%, var(--color-accent-glow), transparent 65%)" }}
-      />
-
-      <FloatingIcons mouseX={mouseX} mouseY={mouseY} />
+      <HeroBackground />
+      <FloatingIcons />
 
       <div className="relative z-20 flex flex-col items-center">
         <Reveal delay={0.05}>
           <p className="mb-2 font-mono text-sm tracking-[0.08em] text-accent">{"// Hey, I'm"}</p>
         </Reveal>
 
-        <h1
-          ref={nameRef}
-          className="name-sheen text-[clamp(2rem,8vw,3.2rem)] leading-[0.88] font-black tracking-[-0.05em] text-transparent md:text-[clamp(2.6rem,5vw,5.5rem)]"
-        >
+        <h1 className="name-sheen text-[clamp(2rem,8vw,3.2rem)] leading-[0.88] font-black tracking-[-0.05em] text-transparent md:text-[clamp(2.6rem,5vw,5.5rem)]">
           M Rizwan Ali
         </h1>
 
