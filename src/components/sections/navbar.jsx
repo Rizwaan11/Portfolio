@@ -105,7 +105,12 @@ export function Navbar() {
                   <a
                     key={link.id}
                     href={`#${link.id}`}
-                    onClick={() => setMobileOpen(false)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setMobileOpen(false);
+                      const el = document.getElementById(link.id);
+                      if (el) el.scrollIntoView({ behavior: "smooth" });
+                    }}
                     className={cn(
                       "rounded-xl px-3 py-2 text-sm font-medium transition-colors",
                       link.id === "resume"
