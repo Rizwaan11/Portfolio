@@ -7,8 +7,9 @@ import { HeroBackground } from "@/components/ui/hero-background";
 import { FloatingIcons } from "@/components/ui/floating-icons";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { MagneticButton } from "@/components/ui/magnetic-button";
+import { CopyEmailButton } from "@/components/ui/copy-email-button";
 import { SOCIAL_ICONS } from "@/components/icons/tech-icons";
-import { socials, rotatingWords } from "@/lib/data";
+import { socials, contact, rotatingWords } from "@/lib/data";
 
 export function Hero() {
   const [wordIndex, setWordIndex] = useState(0);
@@ -98,6 +99,13 @@ export function Hero() {
             <div className="flex items-center gap-1.5">
               {socials.map((s) => {
                 const Icon = SOCIAL_ICONS[s.icon];
+                const iconClass =
+                  "grid h-[38px] w-[38px] place-items-center rounded-[10px] border border-line-visible bg-white/[0.05] text-t2 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft hover:text-accent-bright hover:shadow-[0_8px_22px_-8px_var(--color-accent-glow)]";
+                if (s.icon === "mail") {
+                  return (
+                    <CopyEmailButton key={s.label} email={contact.email} icon={Icon} className={iconClass} />
+                  );
+                }
                 return (
                   <MagneticButton
                     key={s.label}
@@ -107,7 +115,7 @@ export function Hero() {
                     rel="noreferrer"
                     aria-label={s.label}
                     title={s.label}
-                    className="grid h-[38px] w-[38px] place-items-center rounded-[10px] border border-line-visible bg-white/[0.05] text-t2 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft hover:text-accent-bright hover:shadow-[0_8px_22px_-8px_var(--color-accent-glow)]"
+                    className={iconClass}
                   >
                     <Icon />
                   </MagneticButton>

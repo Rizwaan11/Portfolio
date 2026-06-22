@@ -17,7 +17,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: "M Rizwan Ali — MERN Stack Developer",
+  title: "RA Portfolio",
   description:
     "Portfolio of M Rizwan Ali, a MERN stack developer building full-stack and AI-powered web apps. Open to internships and junior roles.",
 };

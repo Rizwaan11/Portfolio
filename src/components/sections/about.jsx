@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useInView, useReducedMotion } from "framer-motion";
-import { MapPin, GraduationCap, Sparkles, Briefcase, ArrowUpRight } from "lucide-react";
+import { MapPin, GraduationCap, Sparkles, ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
@@ -14,7 +14,6 @@ const FACTS = [
   { Icon: MapPin, label: "Pakistan" },
   { Icon: GraduationCap, label: "BS SE @ UoS" },
   { Icon: Sparkles, label: "MERN + AI" },
-  { Icon: Briefcase, label: "Open to roles" },
 ];
 
 const KW = "text-accent";
@@ -23,24 +22,44 @@ const PN = "text-t3";
 const KEY = "text-accent-light";
 const STR = "text-emerald-400";
 
+const tk = (t, c) => ({ t, c });
+
+// key: "value",
+const strLine = (key, value) => [tk(`  ${key}`, KEY), tk(": ", PN), tk(`"${value}"`, STR), tk(",", PN)];
+
+// key: ["a", "b", "c"],
+const arrLine = (key, items) => {
+  const toks = [tk(`  ${key}`, KEY), tk(": ", PN), tk("[", PN)];
+  items.forEach((item, i) => {
+    toks.push(tk(`"${item}"`, STR));
+    if (i < items.length - 1) toks.push(tk(", ", PN));
+  });
+  toks.push(tk("]", PN), tk(",", PN));
+  return toks;
+};
+
 const LINES = [
-  [{ t: "const ", c: KW }, { t: "rizwan ", c: VAR }, { t: "= ", c: PN }, { t: "{", c: PN }],
-  [{ t: "  role", c: KEY }, { t: ": ", c: PN }, { t: '"MERN + AI developer"', c: STR }, { t: ",", c: PN }],
-  [{ t: "  based", c: KEY }, { t: ": ", c: PN }, { t: '"Pakistan"', c: STR }, { t: ",", c: PN }],
-  [{ t: "  building", c: KEY }, { t: ": ", c: PN }, { t: '"EduQuest"', c: STR }, { t: ",", c: PN }],
-  [{ t: "  focus", c: KEY }, { t: ": ", c: PN }, { t: "[", c: PN }, { t: '"RAG"', c: STR }, { t: ", ", c: PN }, { t: '"real-time"', c: STR }, { t: ", ", c: PN }, { t: '"full-stack"', c: STR }, { t: "]", c: PN }, { t: ",", c: PN }],
-  [{ t: "  open_to", c: KEY }, { t: ": ", c: PN }, { t: '"internship | junior role"', c: STR }, { t: ",", c: PN }],
-  [{ t: "}", c: PN }],
+  [tk("const ", KW), tk("rizwan ", VAR), tk("= ", PN), tk("{", PN)],
+  strLine("role", "MERN + AI developer"),
+  strLine("based", "Pakistan"),
+  strLine("education", "BS Software Engineering"),
+  arrLine("stack", ["React", "Node.js", "TypeScript", "MongoDB"]),
+  arrLine("ai", ["RAG", "LangChain", "Vector Search", "Gemini"]),
+  arrLine("focusing", ["Next.js"]),
+  strLine("motto", "Build → Break → Learn → Repeat"),
+  strLine("funFact", "Can spend hours debugging one missing semicolon 😄"),
+  [tk("}", PN)],
 ];
 
 const TABS = ["about.js"];
 
 const TIMELINE = [
-  { year: "2022", title: "Started BS Software Engineering", desc: "Began my degree at University of Sargodha — fell in love with building for the web." },
-  { year: "2023", title: "Went deep on the MERN stack", desc: "Shipped full-stack apps end to end — React, Node, Express, MongoDB." },
-  { year: "2025", title: "Focused on applied AI", desc: "LangChain, RAG, embeddings & vector search — AI grounded in real data." },
-  { year: "Now", title: "Building EduQuest", desc: "An AI-powered gamified learning platform — my solo final-year project, live in production.", link: featuredProject.live },
-  { year: "Next", title: "Open to internships & junior roles", desc: "Ready to learn fast and contribute from day one.", highlight: true },
+  { year: "2022", title: "Started the Journey", desc: "Began my Software Engineering degree and built a foundation in programming, OOP, and data structures." },
+  { year: "2023", title: "Found the Web", desc: "Started learning web development on my own — and found the thing I actually loved building." },
+  { year: "2024", title: "Became a MERN Developer", desc: "Went deep on React, Node, Express & MongoDB, shipping full-stack apps end to end." },
+  { year: "2025", title: "Explored Applied AI", desc: "Built EduQuest — combining RAG pipelines and real-time systems with a modern web stack.", link: featuredProject.live },
+  { year: "2026", title: "Learned to Ship", desc: "Picked up Docker, cloud, and deployment — taking projects from idea to production." },
+  { year: "Next", title: "Keep Building", desc: "Ready to bring real value to an ambitious team — shipping production software, learning fast alongside senior engineers, and turning hard problems into reliable products.", highlight: true },
 ];
 
 function CornerBrackets() {
@@ -75,7 +94,7 @@ export function About() {
     }
     let v = 0;
     const id = setInterval(() => {
-      v += 2;
+      v += 3;
       setVisible(v);
       if (v >= total) clearInterval(id);
     }, 20);
@@ -197,8 +216,8 @@ export function About() {
             </div>
             <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 border-t border-line bg-accent/[0.06] px-3.5 py-2 font-mono text-[10px] text-t3">
               <span>📍 Pakistan</span>
-              <span>⚡ MERN + AI</span>
-              <span className="ml-auto">UTF-8 · JS</span>
+              <span className="ml-auto">{`Ln ${LINES.length}, Col 1`}</span>
+              <span>UTF-8 · JS</span>
             </div>
           </SpotlightCard>
         </div>

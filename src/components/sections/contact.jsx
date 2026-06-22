@@ -1,10 +1,11 @@
 "use client";
 import { useState } from "react";
-import { Mail } from "lucide-react";
+import { Mail, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Reveal } from "@/components/ui/reveal";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { MagneticButton } from "@/components/ui/magnetic-button";
+import { CopyEmailButton } from "@/components/ui/copy-email-button";
 import { Meteors } from "@/components/ui/meteors";
 import { SOCIAL_ICONS } from "@/components/icons/tech-icons";
 import { socials, contact, web3formsAccessKey } from "@/lib/data";
@@ -98,6 +99,48 @@ function ContactForm() {
   );
 }
 
+function EmailDirectly() {
+  const [copied, setCopied] = useState(false);
+
+  async function handleClick() {
+    const isTouch =
+      typeof window !== "undefined" &&
+      window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+    if (isTouch) {
+      window.location.href = `mailto:${contact.email}`;
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(contact.email);
+    } catch {
+      return;
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1600);
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      aria-label={`Email ${contact.email}`}
+      className="group mt-6 inline-flex items-center gap-2 font-mono text-[12.5px] text-t2 transition-colors hover:text-t1"
+    >
+      {copied ? (
+        <Check size={14} className="text-accent-bright" />
+      ) : (
+        <Mail size={14} className="text-accent-bright" />
+      )}
+      {copied ? "Copied to clipboard!" : "or email me directly at"}{" "}
+      {!copied && (
+        <span className="text-accent-bright underline decoration-accent/40 underline-offset-4 group-hover:decoration-accent">
+          {contact.email}
+        </span>
+      )}
+    </button>
+  );
+}
+
 export function Contact() {
   return (
     <section id="contact" className="mx-auto max-w-[1100px] px-6 py-20">
@@ -115,19 +158,18 @@ export function Contact() {
 
             <ContactForm />
 
-            <a
-              href={`mailto:${contact.email}`}
-              className="group mt-6 inline-flex items-center gap-2 font-mono text-[12.5px] text-t2 transition-colors hover:text-t1"
-            >
-              <Mail size={14} className="text-accent-bright" /> or email me directly at{" "}
-              <span className="text-accent-bright underline decoration-accent/40 underline-offset-4 group-hover:decoration-accent">
-                {contact.email}
-              </span>
-            </a>
+            <EmailDirectly />
 
             <div className="mt-7 flex flex-wrap justify-center gap-2.5">
               {socials.map((s) => {
                 const Icon = SOCIAL_ICONS[s.icon];
+                const iconClass =
+                  "grid h-11 w-11 place-items-center rounded-xl border border-line-visible bg-white/[0.05] text-t2 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft hover:text-accent-bright hover:shadow-[0_8px_24px_-8px_var(--color-accent-glow)]";
+                if (s.icon === "mail") {
+                  return (
+                    <CopyEmailButton key={s.label} email={contact.email} icon={Icon} iconSize={18} className={iconClass} />
+                  );
+                }
                 return (
                   <MagneticButton
                     key={s.label}
@@ -137,7 +179,7 @@ export function Contact() {
                     rel="noreferrer"
                     aria-label={s.label}
                     title={s.label}
-                    className="grid h-11 w-11 place-items-center rounded-xl border border-line-visible bg-white/[0.05] text-t2 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft hover:text-accent-bright hover:shadow-[0_8px_24px_-8px_var(--color-accent-glow)]"
+                    className={iconClass}
                   >
                     <Icon size={18} />
                   </MagneticButton>
