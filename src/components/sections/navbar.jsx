@@ -107,9 +107,16 @@ export function Navbar() {
                     href={`#${link.id}`}
                     onClick={(e) => {
                       e.preventDefault();
-                      setMobileOpen(false);
                       const el = document.getElementById(link.id);
-                      if (el) el.scrollIntoView({ behavior: "smooth" });
+                      setMobileOpen(false);
+                      // Defer the scroll past the menu-close re-render: starting a
+                      // smooth scroll in the same tick as the state update gets the
+                      // scroll cancelled on mobile, so the tap appears to do nothing.
+                      if (el) {
+                        requestAnimationFrame(() =>
+                          requestAnimationFrame(() => el.scrollIntoView({ behavior: "smooth" }))
+                        );
+                      }
                     }}
                     className={cn(
                       "rounded-xl px-3 py-2 text-sm font-medium transition-colors",
