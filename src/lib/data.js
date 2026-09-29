@@ -39,8 +39,36 @@ export const marqueeItems = [
   "POSTMAN",
 ];
 
-export const featuredProject = {
+export const jobPortalProject = {
   num: "01",
+  name: "JobPortal",
+  tagline: "Role-Based Recruitment & Applicant Tracking Platform",
+  type: "Full-Stack · Backend-Focused Project · 2026",
+  featured: true,
+  desc: "A full-stack recruitment platform connecting applicants, recruiters, and administrators across the complete hiring process — from job discovery and applications to candidate pipelines, interviews, and moderation. The backend focuses on secure sessions, company-level authorization, data integrity, performance, and reliable background processing.",
+  stats: [
+    { value: "3", label: "User roles" },
+    { value: "4", label: "Company roles" },
+    { value: "7", label: "Hiring stages" },
+    { value: "4", label: "Async workflows" },
+  ],
+  features: [
+    "Dedicated applicant, recruiter, and administrator workflows",
+    "Company-scoped permissions and protected resource ownership",
+    "Private résumé uploads, application snapshots, and duplicate prevention",
+    "Rotated refresh tokens, email verification, Redis caching, and rate limiting",
+    "BullMQ jobs for emails, résumé processing, interview alerts, and weekly summaries",
+  ],
+  stack: ["Next.js", "TypeScript", "Node.js", "Express", "MongoDB", "Redis", "BullMQ", "Cloudinary", "JWT", "Docker"],
+  live: "https://job-portal-client-virid-three.vercel.app/",
+  code: "https://github.com/Rizwaan11/JobPortal",
+  thumbnail: "/jobPortal.png",
+  imageFit: "contain",
+  thumbnailUrl: "job-portal-client-virid-three.vercel.app",
+};
+
+export const featuredProject = {
+  num: "02",
   name: "EduQuest",
   tagline: "AI-Powered Gamified Learning Platform",
   type: "Full-Stack · Final Year Project · 2025–26",
@@ -64,6 +92,8 @@ export const featuredProject = {
   thumbnail: "/eduquest.png",
   thumbnailUrl: "edu-questd.vercel.app",
 };
+
+export const projects = [jobPortalProject, featuredProject];
 
 export const skillGroups = [
   {
@@ -144,7 +174,7 @@ export const education = {
   period: "2022 — 2026",
   degree: "BS — Software Engineering",
   school: "University of Sargodha",
-  cgpa: "3.3 / 4.0",
+  cgpa: "3.48 / 4.0",
   desc: "Focused on full-stack web development, databases, and applied AI. Final-year project: an AI-powered learning platform with retrieval-augmented generation.",
   tags: ["Web Engineering", "Databases", "Applied AI"],
 };
